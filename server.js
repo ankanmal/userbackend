@@ -2,13 +2,14 @@
 
 import express from "express";
 import dbConnect from "./src/config/dbConnect.js";
-import todoRouter from "./src/route/todoRoute.js";
+import 'dotenv/config'
+import userRoute from "./src/routes/userRoute.js";
 
 const app = express();
-const port = 9000;
+const port = process.env.PORT
 dbConnect()
 app.use(express.json())
-app.use('/',todoRouter)
+app.use('/user', userRoute)
 
 
 app.listen(port,()=>{
