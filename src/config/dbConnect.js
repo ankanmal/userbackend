@@ -2,7 +2,6 @@
 import 'dotenv/config'
 import mongoose from "mongoose";
 
-
 const url = process.env.DB_STRING
 
 
