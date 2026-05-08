@@ -1,11 +1,14 @@
 import express from 'express';
-import { createTodo, getAllTodo } from '../controllers/todoController.js';
+import { createTodo, deleteTodo, getAllTodo, paginateTodo, updateTodo } from '../controllers/todoController.js';
 import { hasToken } from '../middleware/hasToken.js';
 
 const todoRoute = express.Router()
 
 todoRoute.post('/create', hasToken, createTodo)
 todoRoute.get('/getAll', hasToken, getAllTodo)
+todoRoute.delete('/deleteTodo/:id', hasToken, deleteTodo)
+todoRoute.patch('/update/:id', hasToken, updateTodo)
+todoRoute.get('/paginate', hasToken, paginateTodo)
 
 
 export default todoRoute

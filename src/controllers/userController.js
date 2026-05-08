@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv/config";
 import { verifyMail } from "../emailVerify/verifyMail.js";
+import sessionSchema from "../models/sessionSchema.js";
 
 export const register = async (req, res) => {
   try {
@@ -57,6 +58,10 @@ export const login = async (req, res) => {
           message: "Credentials Mismatch",
         });
       } else if (passwordCheck && user.isVerified === true) {
+
+        await sessionSchema.findOneAndDelete({userId:user._id})
+        await sessionSchema.create({userId:user._id})
+
         const accessToken = await jwt.sign(
           { id: user._id },
           process.env.secretKey,
@@ -95,3 +100,33 @@ export const login = async (req, res) => {
     });
   }
 };
+
+export const logout = async(req , res)=>{
+  try {
+      const existing = await sessionSchema.findOne({userId:req.userId})
+      const user = await userSchema.findById({_id:req.userId})
+
+      if(existing){
+        await sessionSchema.findOneAndDelete({userId:req.userId})
+        user.isLoggedIn = false
+        await user.save()
+        return res.status(200).json({
+          success: true,
+          message: "Session Ended Succesfully"
+        })
+      }else{
+        return res.status(404).json({
+          success: false,
+          message:"No Session Found"
+        })
+      }
+
+  } catch (error) {
+     return res.send(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}
+
+
